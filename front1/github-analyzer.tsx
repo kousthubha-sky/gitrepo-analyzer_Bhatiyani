@@ -144,7 +144,7 @@ export default function Component() {
   useEffect(() => {
     const fetchPastAnalyses = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/past-analyses')
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/past-analyses`)
         if (!response.ok) throw new Error('Failed to fetch past analyses')
         const data = await response.json()
         setPastAnalyses(data.analyses || [])
@@ -173,7 +173,7 @@ export default function Component() {
     
     try {
       // Make API call to backend - analysis is automatically saved to database
-      const response = await fetch('http://localhost:8000/api/analyze', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ export default function Component() {
 
       // Refresh past analyses
       try {
-        const pastAnalysesResponse = await fetch('http://localhost:8000/api/past-analyses')
+        const pastAnalysesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/past-analyses`)
         if (pastAnalysesResponse.ok) {
           const pastData = await pastAnalysesResponse.json()
           setPastAnalyses(pastData.analyses || [])
@@ -310,7 +310,7 @@ export default function Component() {
   const handleDeleteAnalysis = async (analysisId: number) => {
     setIsDeleting(true)
     try {
-      const response = await fetch(`http://localhost:8000/api/analyses/${analysisId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analyses/${analysisId}`, {
         method: 'DELETE',
       })
 
@@ -469,7 +469,7 @@ export default function Component() {
                                   
                                   try {
                                     // Re-analyze the repository to get comprehensive data
-                                    const response = await fetch('http://localhost:8000/api/analyze', {
+                                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analyze`, {
                                       method: 'POST',
                                       headers: {
                                         'Content-Type': 'application/json',
@@ -509,7 +509,7 @@ export default function Component() {
                                     setHasAnalyzed(true)
                                     
                                     // Refresh past analyses list
-                                    const pastAnalysesResponse = await fetch('http://localhost:8000/api/past-analyses')
+                                    const pastAnalysesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/past-analyses`)
                                     if (pastAnalysesResponse.ok) {
                                       const pastData = await pastAnalysesResponse.json()
                                       setPastAnalyses(pastData.analyses || [])
@@ -1015,7 +1015,7 @@ export default function Component() {
                                   
                                   try {
                                     // Re-analyze the repository to get comprehensive data
-                                    const response = await fetch('http://localhost:8000/api/analyze', {
+                                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analyze`, {
                                       method: 'POST',
                                       headers: {
                                         'Content-Type': 'application/json',
@@ -1055,7 +1055,7 @@ export default function Component() {
                                     setHasAnalyzed(true)
                                     
                                     // Refresh past analyses list
-                                    const pastAnalysesResponse = await fetch('http://localhost:8000/api/past-analyses')
+                                    const pastAnalysesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/past-analyses`)
                                     if (pastAnalysesResponse.ok) {
                                       const pastData = await pastAnalysesResponse.json()
                                       setPastAnalyses(pastData.analyses || [])

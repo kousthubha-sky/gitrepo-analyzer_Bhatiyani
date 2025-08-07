@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { useTheme } from "next-themes"
 import { X, Palette, Database,  Monitor, Sun, Moon } from "lucide-react"
@@ -148,20 +147,7 @@ export function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Default Export Format</Label>
-                  <Select value={settings.exportFormat} onValueChange={(value) => updateSetting("exportFormat", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="json">JSON</SelectItem>
-                      <SelectItem value="csv">CSV</SelectItem>
-                      <SelectItem value="pdf">PDF</SelectItem>
-                      <SelectItem value="xlsx">Excel</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                
               </CardContent>
             </Card>
 
