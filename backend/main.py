@@ -100,18 +100,7 @@ print(f"GitHub Token present: {'Yes' if GITHUB_TOKEN else 'No'}")
 # Helper functions
 
 def fetch_repo_data(repo_url: str):
-    """
-    Fetches basic repository information from the GitHub API.
-    
-    Args:
-        repo_url (str): The URL of the GitHub repository or owner/repo format
-        
-    Returns:
-        dict: Repository data including name, owner, stars, forks, etc.
-        
-    Raises:
-        HTTPException: If repository is not found or URL format is invalid
-    """
+    # Gets basic repo info from GitHub API. Accepts full URL or owner/repo format
     headers = {'Authorization': f'token {GITHUB_TOKEN}'} if GITHUB_TOKEN else {}
     
     # Handle different GitHub URL formats
@@ -138,18 +127,7 @@ def fetch_repo_data(repo_url: str):
     return response.json()
 
 def fetch_commits_data(owner: str, repo: str):
-    """
-    Fetches recent commit history for a repository from the GitHub API.
-    Limits to recent commits for better performance (first 500 commits).
-    
-    Args:
-        owner (str): Repository owner's username
-        repo (str): Repository name
-        
-    Returns:
-        list: List of commit objects containing commit metadata
-              Each commit has author, message, date, and changes
-    """
+    # Fetches up to 500 most recent commits from the repo
     headers = {'Authorization': f'token {GITHUB_TOKEN}'} if GITHUB_TOKEN else {}
     commits_url = f"{GITHUB_API_BASE_URL}/repos/{owner}/{repo}/commits"
 
@@ -175,18 +153,7 @@ def fetch_commits_data(owner: str, repo: str):
     return all_commits
 
 def fetch_contributors_data(owner: str, repo: str):
-    """
-    Retrieves all contributors' information for a repository.
-    Uses pagination to fetch all contributors, 100 per page.
-    
-    Args:
-        owner (str): Repository owner's username
-        repo (str): Repository name
-        
-    Returns:
-        list: List of contributor objects with their contributions count,
-              username, and profile information
-    """
+    # Gets all contributors info with pagination (100 per page)
     headers = {'Authorization': f'token {GITHUB_TOKEN}'} if GITHUB_TOKEN else {}
     contributors_url = f"{GITHUB_API_BASE_URL}/repos/{owner}/{repo}/contributors"
 
@@ -203,17 +170,7 @@ def fetch_contributors_data(owner: str, repo: str):
     return all_contributors
 
 def fetch_languages_data(owner: str, repo: str):
-    """
-    Retrieves programming language statistics for a repository.
-    
-    Args:
-        owner (str): Repository owner's username
-        repo (str): Repository name
-        
-    Returns:
-        dict: Dictionary mapping language names to number of bytes of code.
-              Example: {"Python": 1000, "JavaScript": 500}
-    """
+    # Gets language stats (bytes of code per language)
     headers = {'Authorization': f'token {GITHUB_TOKEN}'} if GITHUB_TOKEN else {}
     languages_url = f"{GITHUB_API_BASE_URL}/repos/{owner}/{repo}/languages"
     
