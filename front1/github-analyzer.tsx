@@ -363,6 +363,7 @@ export default function Component() {
                   </h1>
                   <p className="text-sm sm:text-base text-muted-foreground mt-1">
                     Gain insights into any public GitHub repository
+                    <br /> Enter a repository URL to get started(e.g: https://github.com/user/repo)
                   </p>
                 </div>
               </div>

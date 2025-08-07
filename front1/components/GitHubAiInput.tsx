@@ -1,5 +1,15 @@
 "use client"
 
+/**
+ * @fileoverview GitHub Repository Input Component
+ * 
+ * This component provides an animated input interface for entering GitHub repository URLs.
+ * It features auto-resizing textarea, loading states, and animated transitions.
+ * 
+ * @author Kousthubha
+ * @version 1.0.0
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Globe, Send, Search } from "lucide-react"
@@ -8,17 +18,33 @@ import { cn } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
 import { ThemeToggle } from "./theme-toggle"
 
+/**
+ * Props for the auto-resizing textarea hook
+ * @interface UseAutoResizeTextareaProps
+ * @property {number} minHeight - Minimum height of the textarea in pixels
+ * @property {number} [maxHeight] - Optional maximum height of the textarea in pixels
+ */
 interface UseAutoResizeTextareaProps {
   minHeight: number
   maxHeight?: number
 }
 
+/**
+ * Custom hook to handle textarea auto-resizing
+ * @param {UseAutoResizeTextareaProps} props - Configuration for the auto-resize behavior
+ * @returns {{ textareaRef: React.RefObject<HTMLTextAreaElement>, adjustHeight: (reset?: boolean) => void }}
+ */
 function useAutoResizeTextarea({
   minHeight,
   maxHeight,
 }: UseAutoResizeTextareaProps) {
+  // Reference to the textarea DOM element
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  /**
+   * Adjusts the height of the textarea based on its content
+   * @param {boolean} [reset] - If true, resets height to minHeight
+   */
   const adjustHeight = useCallback(
     (reset?: boolean) => {
       const textarea = textareaRef.current
@@ -74,6 +100,14 @@ const AnimatedPlaceholder = ({ showSearch }: { showSearch: boolean }) => (
   </AnimatePresence>
 )
 
+/**
+ * Props for the GitHubAiInput component
+ * @interface GitHubAiInputProps
+ * @property {(repoUrl: string) => void} onAnalyze - Callback function triggered when a repository URL is submitted
+ * @property {boolean} isAnalyzing - Flag indicating if analysis is in progress
+ * @property {boolean} hasAnalyzed - Flag indicating if analysis has been completed
+ * @property {string} [className] - Optional CSS classes to apply to the component
+ */
 interface GitHubAiInputProps {
   onAnalyze: (repoUrl: string) => void
   isAnalyzing: boolean
@@ -81,19 +115,39 @@ interface GitHubAiInputProps {
   className?: string
 }
 
+/**
+ * GitHubAiInput Component
+ * 
+ * A sophisticated input component for analyzing GitHub repositories. Features include:
+ * - Auto-resizing textarea
+ * - Animated placeholder text
+ * - Loading states with animations
+ * - Theme toggle integration
+ * - Search mode toggle
+ * 
+ * @param {GitHubAiInputProps} props - Component props
+ * @returns {JSX.Element} Rendered component
+ */
 export function GitHubAiInput({ 
   onAnalyze, 
   isAnalyzing, 
   hasAnalyzed, 
   className 
 }: GitHubAiInputProps) {
+    // State for input value and search mode
   const [value, setValue] = useState("")
+  const [showSearch, setShowSearch] = useState(true)
+
+  // Initialize auto-resize textarea
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: MIN_HEIGHT,
     maxHeight: MAX_HEIGHT,
   })
-  const [showSearch, setShowSearch] = useState(true)
 
+  /**
+   * Handles the submission of repository URL for analysis
+   * Validates input, triggers analysis, and resets the input field
+   */
   const handleSubmit = () => {
     if (!value.trim() || isAnalyzing) return
     
@@ -102,6 +156,11 @@ export function GitHubAiInput({
     adjustHeight(true)
   }
 
+  /**
+   * Handles keyboard events for the textarea
+   * Submits on Enter (without shift) and prevents default newline
+   * @param {React.KeyboardEvent} e - Keyboard event object
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
@@ -109,13 +168,16 @@ export function GitHubAiInput({
     }
   }
 
+  // Animated container styles based on analysis state
+  const containerAnimation = {
+    y: hasAnalyzed ? -20 : 0,
+    scale: hasAnalyzed ? 0.95 : 1,
+  }
+
   return (
     <motion.div 
       className={cn("w-full py-4", className)}
-      animate={{
-        y: hasAnalyzed ? -20 : 0,
-        scale: hasAnalyzed ? 0.95 : 1,
-      }}
+      animate={containerAnimation}
       transition={{
         type: "spring",
         stiffness: 300,
