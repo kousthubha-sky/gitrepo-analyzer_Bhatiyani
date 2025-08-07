@@ -6,7 +6,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Code, GitCommit, Users, Calendar, GitBranch, Clock, Settings, Trash2, AlertTriangle, ArrowLeft } from "lucide-react"
+import { Code, Code2, FileEdit, Files, GitCommit, Users, Calendar, GitBranch, Clock, Settings, LayoutDashboard, Trash2, AlertTriangle, ArrowLeft, ChevronUp } from "lucide-react"
+
+// Back to Top Button Component
+const BackToTopButton = () => {
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="w-full mt-4 flex items-center justify-center gap-2 lg:hidden hover:bg-muted/50"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    >
+      <ChevronUp className="h-4 w-4" />
+      Back to top
+    </Button>
+  )
+}
+import { ExpandedTabs } from "./components/ui/expanded-tabs"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { SettingsPanel } from "./components/settings-panel"
 import { ThemeToggle } from "./components/theme-toggle"
@@ -361,10 +377,12 @@ export default function Component() {
                   <h1 className="text-2xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50">
                     GitHub Repo Analyzer
                   </h1>
-                  <p className="text-sm sm:text-base text-muted-foreground mt-1">
-                    Gain insights into any public GitHub repository
-                    <br /> Enter a repository URL to get started(e.g: https://github.com/user/repo)
-                  </p>
+                  {!hasAnalyzed && !isAnalyzing && (
+                    <p className="text-sm sm:text-base text-muted-foreground mt-1">
+                      Gain insights into any public GitHub repository
+                      <br /> Enter a repository URL to get started(e.g: https://github.com/user/repo)
+                    </p>
+                  )}
                 </div>
               </div>
               {/* Controls - Centered */}
@@ -397,15 +415,17 @@ export default function Component() {
       <div className="container mx-auto px-4 py-8">
         {/* AI Input Section */}
         <div className="flex flex-col items-center justify-center">
-          <GitHubAiInput 
-            onAnalyze={(url) => {
-              setRepoUrl(url)
-              handleAnalyze()
-            }}
-            isAnalyzing={isAnalyzing}
-            hasAnalyzed={hasAnalyzed}
-            className="mb-4"
-          />
+          {!hasAnalyzed && !isAnalyzing && (
+            <GitHubAiInput 
+              onAnalyze={(url) => {
+                setRepoUrl(url)
+                handleAnalyze()
+              }}
+              isAnalyzing={isAnalyzing}
+              hasAnalyzed={hasAnalyzed}
+              className="mb-4"
+            />
+          )}
         </div>
 
         {/* Past Analyses - Always visible */}
@@ -578,6 +598,50 @@ export default function Component() {
           </Card>
         )}
 
+        {/* Mobile Navigation for Analysis Sections */}
+        {hasAnalyzed && !isAnalyzing && (
+          <div className="sticky top-0 z-20 -mx-4 mb-6 px-4 py-3 lg:hidden">
+            <ExpandedTabs
+              tabs={[
+                {
+                  title: "Overview",
+                  icon: LayoutDashboard,
+                  onClick: () => document.getElementById('overview-stats')?.scrollIntoView({ behavior: 'smooth' })
+                },
+                {
+                  title: "Activity",
+                  icon: GitCommit,
+                  onClick: () => document.getElementById('repository-activity')?.scrollIntoView({ behavior: 'smooth' })
+                },
+                { type: "separator" },
+                {
+                  title: "Contributors",
+                  icon: Users,
+                  onClick: () => document.getElementById('contributors')?.scrollIntoView({ behavior: 'smooth' })
+                },
+                {
+                  title: "Languages",
+                  icon: Code2,
+                  onClick: () => document.getElementById('languages')?.scrollIntoView({ behavior: 'smooth' })
+                },
+                { type: "separator" },
+                {
+                  title: "Files",
+                  icon: Files,
+                  onClick: () => document.getElementById('file-types')?.scrollIntoView({ behavior: 'smooth' })
+                },
+                {
+                  title: "Modified",
+                  icon: FileEdit,
+                  onClick: () => document.getElementById('modified-files')?.scrollIntoView({ behavior: 'smooth' })
+                }
+              ]}
+              className="w-full justify-center"
+              activeColor="text-primary"
+            />
+          </div>
+        )}
+
         {/* Error Display */}
         {error && (
           <div className="mb-6 flex justify-center">
@@ -595,13 +659,49 @@ export default function Component() {
 
         {(hasAnalyzed || isAnalyzing) && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Enhanced Sidebar with Profile and Analysis - Shows first on mobile */}
+            <div className="lg:col-span-1 space-y-6 order-first lg:order-last">
+              {/* Repository Information - Always visible */}
+              {(hasAnalyzed || isAnalyzing) && (
+                <RepositoryInfo 
+                  repoUrl={repoUrl}
+                  analysisData={analysisData || undefined}
+                />
+              )}
+
+              {/* Profile Section - Always visible when analyzed */}
+              {hasAnalyzed && !isAnalyzing && analysisData && <ProfileSection analysisData={analysisData} />}
+
+              {/* Analysis Overview - Always visible when analyzed */}
+              {hasAnalyzed && !isAnalyzing && analysisData && <AnalysisOverview analysisData={analysisData} />}
+            </div>
+
             {/* Main Content Area */}
-            <div className="lg:col-span-3 space-y-6">
+            <div className="lg:col-span-3 space-y-6 order-last lg:order-first">
               {isAnalyzing && (
               <div className="space-y-6">
+                {/* Loading Message */}
+                <Card className="text-center p-6">
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-center">
+                      <div className="relative">
+                        <div className="h-16 w-16 rounded-full border-4 border-muted animate-pulse" />
+                        <div className="absolute top-0 left-0 h-16 w-16 rounded-full border-4 border-t-primary animate-spin" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-medium">Analyzing Repository</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Please wait while we analyze the repository structure, commit history, and code patterns...
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Loading Skeletons */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {[...Array(4)].map((_, i) => (
-                    <Card key={i}>
+                    <Card key={i} className="animate-pulse">
                       <CardHeader className="pb-2">
                         <Skeleton className="h-4 w-24" />
                       </CardHeader>
@@ -614,7 +714,7 @@ export default function Component() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[...Array(4)].map((_, i) => (
-                    <Card key={i}>
+                    <Card key={i} className="animate-pulse">
                       <CardHeader>
                         <Skeleton className="h-5 w-32" />
                       </CardHeader>
@@ -630,7 +730,7 @@ export default function Component() {
             {hasAnalyzed && !isAnalyzing && (
               <>
                 {/* Overview Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div id="overview-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Card className="hover:shadow-md transition-shadow">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">Total Commits</CardTitle>
@@ -679,12 +779,15 @@ export default function Component() {
                       <p className="text-xs text-muted-foreground">Active branches</p>
                     </CardContent>
                   </Card>
+                  <div className="col-span-full">
+                    <BackToTopButton />
+                  </div>
                 </div>
 
                 {/* Enhanced Charts Grid */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                   {/* Enhanced Commit Activity Chart */}
-                  <Card className="hover:shadow-md transition-shadow bg-amber-50/10">
+                  <Card id="repository-activity" className="hover:shadow-md transition-shadow bg-amber-50/10">
                     <CardHeader>
                       <CardTitle>Repository Activity</CardTitle>
                       <CardDescription>Commits, Issues, and Pull Requests over time</CardDescription>
@@ -745,11 +848,12 @@ export default function Component() {
                           </ResponsiveContainer>
                         </ChartContainer>
                       </div>
+                      <BackToTopButton />
                     </CardContent>
                   </Card>
 
                   {/* Enhanced Top Contributors Chart */}
-                  <Card className="hover:shadow-md transition-shadow bg-amber-50/10">
+                  <Card id="contributors" className="hover:shadow-md transition-shadow bg-amber-50/10">
                     <CardHeader>
                       <CardTitle>Top Contributors</CardTitle>
                       <CardDescription>Most active contributors by commits and code changes</CardDescription>
@@ -785,7 +889,7 @@ export default function Component() {
                   </Card>
 
                   {/* Enhanced Language Distribution Chart */}
-                  <Card className="hover:shadow-md transition-shadow">
+                  <Card id="languages" className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <CardTitle>Language Distribution</CardTitle>
                       <CardDescription>Programming languages by percentage and lines of code</CardDescription>
@@ -840,7 +944,7 @@ export default function Component() {
                   </Card>
 
                   {/* Enhanced File Type Distribution Chart */}
-                  <Card className="hover:shadow-md transition-shadow">
+                  <Card id="file-types" className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <CardTitle>File Type Distribution</CardTitle>
                       <CardDescription>Distribution of file extensions and counts</CardDescription>
@@ -896,7 +1000,7 @@ export default function Component() {
                 </div>
 
                 {/* Most Modified Files Table */}
-                <Card className="hover:shadow-md transition-shadow">
+                <Card id="modified-files" className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <CardTitle>Most Modified Files</CardTitle>
                     <CardDescription>
@@ -1126,23 +1230,6 @@ export default function Component() {
             )}
 
           </div>
-
-          {/* Enhanced Sidebar with Profile and Analysis */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Repository Information - Always visible */}
-            {(hasAnalyzed || isAnalyzing) && (
-              <RepositoryInfo 
-                repoUrl={repoUrl}
-                analysisData={analysisData || undefined}
-              />
-            )}
-
-            {/* Profile Section - Always visible when analyzed */}
-            {hasAnalyzed && !isAnalyzing && analysisData && <ProfileSection analysisData={analysisData} />}
-
-            {/* Analysis Overview - Always visible when analyzed */}
-            {hasAnalyzed && !isAnalyzing && analysisData && <AnalysisOverview analysisData={analysisData} />}
-            </div>
           </div>
         )}
 
