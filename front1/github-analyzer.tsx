@@ -683,7 +683,7 @@ export default function Component() {
                 {/* Enhanced Charts Grid */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                   {/* Enhanced Commit Activity Chart */}
-                  <Card className="hover:shadow-md transition-shadow">
+                  <Card className="hover:shadow-md transition-shadow bg-amber-50/10">
                     <CardHeader>
                       <CardTitle>Repository Activity</CardTitle>
                       <CardDescription>Commits, Issues, and Pull Requests over time</CardDescription>

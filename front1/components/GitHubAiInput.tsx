@@ -130,6 +130,7 @@ export function GitHubAiInput({
             transition={{ duration: 0.3 }}
           >
             Please wait while we analyze the repository. This might take a few moments...
+            <br />If search bar gets empty,try again.
           </motion.p>
         </div>
       )}
