@@ -378,7 +378,7 @@ export default function Component() {
                     GitHub Repo Analyzer
                   </h1>
                   {!hasAnalyzed && !isAnalyzing && (
-                    <p className="text-sm sm:text-base text-muted-foreground mt-1">
+                      <p className="text-sm sm:text-base text-muted-foreground mt-1">
                       Gain insights into any public GitHub repository
                       <br /> Enter a repository URL to get started(e.g: https://github.com/user/repo)
                     </p>
@@ -1037,21 +1037,11 @@ export default function Component() {
                                 </TableRow>
                               ))
                           ) : (
-                            // Mock data for demonstration since detailed file stats require additional API calls
-                            [
-                              { path: "src/components/main.tsx", changes: 245, additions: 180, deletions: 65 },
-                              { path: "package.json", changes: 89, additions: 67, deletions: 22 },
-                              { path: "README.md", changes: 156, additions: 120, deletions: 36 },
-                              { path: "src/utils/helpers.ts", changes: 78, additions: 45, deletions: 33 },
-                              { path: "src/styles/globals.css", changes: 34, additions: 28, deletions: 6 }
-                            ].map((file, index) => (
-                              <TableRow key={index} className="hover:bg-muted/50">
-                                <TableCell className="font-mono text-sm">{file.path}</TableCell>
-                                <TableCell className="text-right font-semibold">{file.changes}</TableCell>
-                                <TableCell className="text-right text-green-600">+{file.additions}</TableCell>
-                                <TableCell className="text-right text-red-600">-{file.deletions}</TableCell>
-                              </TableRow>
-                            ))
+                            <TableRow>
+                              <TableCell colSpan={4} className="text-center text-muted-foreground py-6">
+                                No file modification data available
+                              </TableCell>
+                            </TableRow>
                           )}
                         </TableBody>
                       </Table>
